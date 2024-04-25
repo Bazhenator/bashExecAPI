@@ -1,0 +1,17 @@
+db:
+  host: "postgres:5432"
+  name: "testdb"
+  user: "pguser"
+  password: "pgpwd"
+connector-service:
+  host: ":8003"
+  command-url:
+  commands-per-request: 100
+  thread-count: 10
+  max-time-sleep: 8000s
+  min-time-sleep: 50s
+  write-timeout: 15s
+  read-timeout: 15s
+logger:
+  log-file: "logs.log"
+  warn-file: "err_logs.log"
