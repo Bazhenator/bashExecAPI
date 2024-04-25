@@ -1,8 +1,8 @@
 package repository
 
 import (
-	provider "SQLbash/internal/db"
-	db "SQLbash/internal/repository/psql"
+	provider "bashExecAPI/internal/db"
+	db "bashExecAPI/internal/repository/psql"
 )
 
 type CommandRepository struct {

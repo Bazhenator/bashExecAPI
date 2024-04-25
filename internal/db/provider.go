@@ -1,7 +1,7 @@
 package provider
 
 import (
-	errorlib "SQLbash/internal/error"
+	errorlib "bashExecAPI/internal/error"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 )

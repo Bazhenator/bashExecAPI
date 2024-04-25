@@ -1,6 +1,6 @@
 package service
 
-import "SQLbash/internal/repository"
+import "bashExecAPI/internal/repository"
 
 type Service struct {
 	commandRepo repository.ICommandRepository

@@ -1,8 +1,8 @@
 package http
 
 import (
-	v1 "SQLbash/internal/handler/http/v1"
-	"SQLbash/internal/service"
+	v1 "bashExecAPI/internal/handler/http/v1"
+	"bashExecAPI/internal/service"
 	"github.com/gorilla/mux"
 )
 

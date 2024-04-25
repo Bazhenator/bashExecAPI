@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"SQLbash/internal/service"
+	"bashExecAPI/internal/service"
 	"github.com/gorilla/mux"
 )
 

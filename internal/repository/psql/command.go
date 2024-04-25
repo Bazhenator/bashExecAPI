@@ -1,9 +1,9 @@
 package psql
 
 import (
-	provider "SQLbash/internal/db"
-	"SQLbash/internal/domain"
-	errorlib "SQLbash/internal/error"
+	provider "bashExecAPI/internal/db"
+	"bashExecAPI/internal/domain"
+	errorlib "bashExecAPI/internal/error"
 	"context"
 	"fmt"
 )
@@ -18,7 +18,7 @@ func NewCommandRepository(provider *provider.Provider) *CommandRepository {
 	}
 }
 
-func (r *CommandRepository) ListCommands(ctx context.Context) ([]domain.Command, error) {
+func (r *CommandRepository) GetCommands(ctx context.Context) ([]domain.Command, error) {
 	var commands []domain.Command
 	err := r.db.SelectContext(ctx, &commands, "SELECT * FROM commands")
 	if err != nil {
@@ -27,7 +27,7 @@ func (r *CommandRepository) ListCommands(ctx context.Context) ([]domain.Command,
 	return commands, nil
 }
 
-func (r *CommandRepository) GetCommand(ctx context.Context, id int) (*domain.Command, error) {
+func (r *CommandRepository) GetCommand(ctx context.Context, id string) (*domain.Command, error) {
 	var command domain.Command
 	err := r.db.GetContext(ctx, &command, "SELECT * FROM commands WHERE id = $1", id)
 	if err != nil {
@@ -36,10 +36,12 @@ func (r *CommandRepository) GetCommand(ctx context.Context, id int) (*domain.Com
 	return &command, nil
 }
 
-func (r *CommandRepository) AddCommand(ctx context.Context, command string) error {
-	_, err := r.db.ExecContext(ctx, "INSERT INTO commands (command) VALUES ($1)", command)
-	if err != nil {
-		return fmt.Errorf("failed to add command: %w", errorlib.ErrHttpInternal)
-	}
-	return nil
+func (r *CommandRepository) CreateCommand(ctx context.Context, command string) (string, error) {
+	// Implement logic to insert a new command into the database and return its ID
+	return "", fmt.Errorf("not implemented")
+}
+
+func (r *CommandRepository) StopCommand(ctx context.Context, id string) error {
+	// Implement logic to stop a running command by ID
+	return fmt.Errorf("not implemented")
 }
