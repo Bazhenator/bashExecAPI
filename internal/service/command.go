@@ -6,6 +6,7 @@ import (
 )
 
 func (s *Service) GetCommands(ctx context.Context) ([]domain.Command, error) {
+
 	return s.commandRepo.GetCommands(ctx)
 }
 

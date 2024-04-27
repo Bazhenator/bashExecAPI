@@ -81,8 +81,8 @@ func (h *CommandHandler) StopCommand(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *CommandHandler) SetRouter(router *mux.Router) {
-	router.HandleFunc("/commands", h.GetCommands).Methods(http.MethodGet)
+	router.HandleFunc("/commands/", h.GetCommands).Methods(http.MethodGet)
 	router.HandleFunc("/commands/{id}", h.GetCommand).Methods(http.MethodGet)
-	router.HandleFunc("/commands", h.CreateCommand).Methods(http.MethodPost)
-	router.HandleFunc("/commands/{id}/stop", h.StopCommand).Methods(http.MethodPost)
+	router.HandleFunc("/commands/create", h.CreateCommand).Methods(http.MethodPost)
+	router.HandleFunc("/commands/stop/{id}", h.StopCommand).Methods(http.MethodPost)
 }

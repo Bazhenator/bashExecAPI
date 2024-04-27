@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"bashExecAPI/internal/app"
@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	configFile string = "configs/config.yaml"
+	configFile string = "C:/Users/Admin/GolandProjects/bashExecAPI/configs/config.yaml"
 )
 
 func main() {
