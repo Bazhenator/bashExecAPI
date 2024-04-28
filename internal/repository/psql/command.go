@@ -6,6 +6,7 @@ import (
 	errorlib "bashExecAPI/internal/error"
 	"context"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 )
 
 type CommandRepository struct {
@@ -37,8 +38,18 @@ func (r *CommandRepository) GetCommand(ctx context.Context, id string) (*domain.
 }
 
 func (r *CommandRepository) CreateCommand(ctx context.Context, command string) (string, error) {
-	// Implement logic to insert a new command into the database and return its ID
-	return "", fmt.Errorf("not implemented")
+	query := `
+		INSERT INTO commands (command) VALUES ($1) RETURNING id;
+	`
+
+	var id int64
+	err := r.db.QueryRowContext(ctx, query, command).Scan(&id)
+	if err != nil {
+		log.Error(fmt.Errorf("failed to insert command into database: %v", err))
+		return "", err
+	}
+
+	return fmt.Sprintf("%d", id), nil
 }
 
 func (r *CommandRepository) StopCommand(ctx context.Context, id string) error {
