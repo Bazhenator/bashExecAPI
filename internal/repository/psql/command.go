@@ -7,6 +7,8 @@ import (
 	"context"
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"os"
+	"os/exec"
 )
 
 type CommandRepository struct {
@@ -52,7 +54,44 @@ func (r *CommandRepository) CreateCommand(ctx context.Context, command string) (
 	return fmt.Sprintf("%d", id), nil
 }
 
+func (r *CommandRepository) RunCommand(ctx context.Context, id string) (string, error) {
+	command, err := r.GetCommand(ctx, id)
+	if err != nil {
+		log.Error(fmt.Errorf("failed to get command: %v", err))
+		return "", err
+	}
+	file, err := os.Create("script.sh")
+	if err != nil {
+		log.Error(fmt.Errorf("failed to open script file: %v", err))
+		return "", err
+	}
+	defer os.Remove(file.Name())
+
+	if _, err := file.WriteString("#!/bin/bash\n" + command.Command); err != nil {
+		log.Error(fmt.Errorf("failed to write command to script file: %v", err))
+		return "", err
+	}
+	if err := file.Close(); err != nil {
+		log.Error(fmt.Errorf("failed to close script file: %v", err))
+		return "", err
+	}
+
+	if err := os.Chmod(file.Name(), 0755); err != nil {
+		log.Error(fmt.Errorf("failed to set execute permissions on script file: %v", err))
+		return "", err
+	}
+
+	cmd := exec.Command("bash", file.Name())
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Error(fmt.Errorf("failed to execute command: %v", err))
+		return "", err
+	}
+
+	return string(output), nil
+}
+
 func (r *CommandRepository) StopCommand(ctx context.Context, id string) error {
-	// Implement logic to stop a running command by ID
+
 	return fmt.Errorf("not implemented")
 }

@@ -18,6 +18,10 @@ func (s *Service) CreateCommand(ctx context.Context, command string) (string, er
 	return s.commandRepo.CreateCommand(ctx, command)
 }
 
+func (s *Service) RunCommand(ctx context.Context, id string) (string, error) {
+	return s.commandRepo.RunCommand(ctx, id)
+}
+
 func (s *Service) StopCommand(ctx context.Context, id string) error {
 	return s.commandRepo.StopCommand(ctx, id)
 }

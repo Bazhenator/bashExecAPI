@@ -12,5 +12,6 @@ type ICommandRepository interface {
 	GetCommands(ctx context.Context) ([]domain.Command, error)
 	GetCommand(ctx context.Context, id string) (*domain.Command, error)
 	CreateCommand(ctx context.Context, command string) (string, error)
+	RunCommand(ctx context.Context, id string) (string, error)
 	StopCommand(ctx context.Context, id string) error
 }
