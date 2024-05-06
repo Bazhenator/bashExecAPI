@@ -2,12 +2,14 @@ package service
 
 import "github.com/Bazhenator/bashExecAPI/internal/repository"
 
-type Service struct {
+type Services struct {
 	commandRepo repository.ICommandRepository
+	dbRepo      repository.IDataBaseRepository
 }
 
-func NewService(repositories *repository.CommandRepository) *Service {
-	return &Service{
+func NewServices(repositories *repository.Repositories) *Services {
+	return &Services{
 		commandRepo: repositories.CommandRepository,
+		dbRepo:      repositories.DBRepository,
 	}
 }

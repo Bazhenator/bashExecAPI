@@ -24,9 +24,9 @@ func NewApp(config *Config, notify chan error) (*App, error) {
 		return nil, fmt.Errorf("Failed to initialize db with error: %w", err)
 	}
 
-	repos := repository.NewCommandRepository(provider)
+	repos := repository.NewRepositories(provider)
 
-	services := service.NewService(repos)
+	services := service.NewServices(repos)
 	handlers := handler.NewHandler(services)
 
 	c := cors.New(cors.Options{

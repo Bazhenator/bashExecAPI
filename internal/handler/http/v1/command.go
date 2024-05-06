@@ -10,13 +10,36 @@ import (
 )
 
 type CommandHandler struct {
-	service *service.Service
+	service *service.Services
 }
 
-func NewCommandHandler(service *service.Service) *CommandHandler {
+func NewCommandHandler(service *service.Services) *CommandHandler {
 	return &CommandHandler{
 		service: service,
 	}
+}
+
+func (h *CommandHandler) CreateCommand(w http.ResponseWriter, r *http.Request) {
+	var command struct {
+		Command string `json:"command"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&command)
+	if err != nil {
+		jsonError := errorlib.GetJSONError("Invalid request body", err)
+		w.WriteHeader(jsonError.Error.Code)
+		json.NewEncoder(w).Encode(jsonError)
+		return
+	}
+
+	result, id, err := h.service.CreateCommand(r.Context(), command.Command)
+	if err != nil {
+		jsonError := errorlib.GetJSONError("Failed to create command", err)
+		w.WriteHeader(jsonError.Error.Code)
+		json.NewEncoder(w).Encode(jsonError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{"id": id, "result": result})
 }
 
 func (h *CommandHandler) ListCommands(w http.ResponseWriter, r *http.Request) {
@@ -42,29 +65,6 @@ func (h *CommandHandler) GetCommand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(command)
-}
-
-func (h *CommandHandler) CreateCommand(w http.ResponseWriter, r *http.Request) {
-	var command struct {
-		Command string `json:"command"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&command)
-	if err != nil {
-		jsonError := errorlib.GetJSONError("Invalid request body", err)
-		w.WriteHeader(jsonError.Error.Code)
-		json.NewEncoder(w).Encode(jsonError)
-		return
-	}
-
-	result, id, err := h.service.CreateCommand(r.Context(), command.Command)
-	if err != nil {
-		jsonError := errorlib.GetJSONError("Failed to create command", err)
-		w.WriteHeader(jsonError.Error.Code)
-		json.NewEncoder(w).Encode(jsonError)
-		return
-	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"id": id, "result": result})
 }
 
 func (h *CommandHandler) RunCommand(w http.ResponseWriter, r *http.Request) {
