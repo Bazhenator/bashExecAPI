@@ -19,7 +19,7 @@ type App struct {
 }
 
 func NewApp(config *Config, notify chan error) (*App, error) {
-	provider, err := provider.NewPsqlProvider(config.DbConfig)
+	provider, err := provider.NewPsqlProvider(&config.DbConfig)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to initialize db with error: %w", err)
 	}
@@ -42,11 +42,7 @@ func NewApp(config *Config, notify chan error) (*App, error) {
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 	handlers.SetRouter(router)
 
-	server := server.NewServer(&server.ServerConfig{
-		Host:         &config.CommandConfig.Host,
-		ReadTimeout:  &config.CommandConfig.ReadTimeout,
-		WriteTimeout: &config.CommandConfig.WriteTimeout,
-	}, c.Handler(router), notify)
+	server := server.NewServer(&config.ServerConfig, c.Handler(router), notify)
 
 	return &App{
 		server:   server,

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
+	"strconv"
 )
 
 type CommandHandler struct {
@@ -18,8 +19,8 @@ func NewCommandHandler(service *service.Service) *CommandHandler {
 	}
 }
 
-func (h *CommandHandler) GetCommands(w http.ResponseWriter, r *http.Request) {
-	commands, err := h.service.GetCommands(r.Context())
+func (h *CommandHandler) ListCommands(w http.ResponseWriter, r *http.Request) {
+	commands, err := h.service.ListCommands(r.Context())
 	if err != nil {
 		jsonError := errorlib.GetJSONError("Failed to get commands", err)
 		w.WriteHeader(jsonError.Error.Code)
@@ -32,8 +33,8 @@ func (h *CommandHandler) GetCommands(w http.ResponseWriter, r *http.Request) {
 func (h *CommandHandler) GetCommand(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-
-	command, err := h.service.GetCommand(r.Context(), id)
+	idInt, err := strconv.Atoi(id)
+	command, err := h.service.GetCommand(r.Context(), idInt)
 	if err != nil {
 		jsonError := errorlib.GetJSONError("Failed to get command", err)
 		w.WriteHeader(jsonError.Error.Code)
@@ -55,7 +56,7 @@ func (h *CommandHandler) CreateCommand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := h.service.CreateCommand(r.Context(), command.Command)
+	result, id, err := h.service.CreateCommand(r.Context(), command.Command)
 	if err != nil {
 		jsonError := errorlib.GetJSONError("Failed to create command", err)
 		w.WriteHeader(jsonError.Error.Code)
@@ -63,26 +64,27 @@ func (h *CommandHandler) CreateCommand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"id": id})
+	json.NewEncoder(w).Encode(map[string]string{"id": id, "result": result})
 }
 
-func (h *CommandHandler) StopCommand(w http.ResponseWriter, r *http.Request) {
+func (h *CommandHandler) RunCommand(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	err := h.service.StopCommand(r.Context(), id)
+	idInt, err := strconv.Atoi(id)
+	command, err := h.service.RunCommand(r.Context(), idInt)
 	if err != nil {
-		jsonError := errorlib.GetJSONError("Failed to stop command", err)
+		jsonError := errorlib.GetJSONError("Failed to run command", err)
 		w.WriteHeader(jsonError.Error.Code)
 		json.NewEncoder(w).Encode(jsonError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(command)
 }
 
 func (h *CommandHandler) SetRouter(router *mux.Router) {
-	router.HandleFunc("/commands", h.GetCommands).Methods(http.MethodGet)
+	router.HandleFunc("/commands/list", h.ListCommands).Methods(http.MethodGet)
 	router.HandleFunc("/commands/{id}", h.GetCommand).Methods(http.MethodGet)
-	router.HandleFunc("/commands", h.CreateCommand).Methods(http.MethodPost)
-	router.HandleFunc("/commands/{id}/stop", h.StopCommand).Methods(http.MethodPost)
+	router.HandleFunc("/commands/create", h.CreateCommand).Methods(http.MethodPost)
+	router.HandleFunc("/commands/run/{id}", h.RunCommand).Methods(http.MethodPost)
 }

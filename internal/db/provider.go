@@ -3,6 +3,7 @@ package provider
 import (
 	errorlib "bashExecAPI/internal/error"
 	"fmt"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -11,8 +12,8 @@ type Provider struct {
 }
 
 func NewPsqlProvider(config *DbConfig) (*Provider, error) {
-	connectionFmt := "postgresql://@%s/%s?user=%s&password=%s&sslmode=disable"
-	db, err := sqlx.Open("pgx", fmt.Sprintf(connectionFmt, config.Host, config.Name, config.User, config.Password))
+	connectionFmt := "postgresql://%s:%s@%s/%s?sslmode=disable"
+	db, err := sqlx.Open("pgx", fmt.Sprintf(connectionFmt, config.User, config.Password, config.Host, config.Name))
 	if err != nil {
 		return nil, fmt.Errorf("failed to add database to pool. Error: %w", errorlib.ErrHttpInternal)
 	}
