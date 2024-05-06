@@ -29,13 +29,23 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("Unable to create '%s' file. Error: %w", conf.LoggerConfig.LogFile, err))
 	}
-	defer logs.Close()
+	defer func() {
+		logs.Close()
+		if err := os.Remove(conf.LoggerConfig.LogFile); err != nil {
+			log.Println("Error removing warn file:", err)
+		}
+	}()
 
 	errLogs, err := os.OpenFile(conf.LoggerConfig.WarnFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModeAppend)
 	if err != nil {
 		panic(fmt.Errorf("Unable to create '%s' file. Error: %w", conf.LoggerConfig.WarnFile, err))
 	}
-	defer errLogs.Close()
+	defer func() {
+		errLogs.Close()
+		if err := os.Remove(conf.LoggerConfig.WarnFile); err != nil {
+			log.Println("Error removing warn file:", err)
+		}
+	}()
 
 	logger.SetupLogrus(logs, errLogs)
 	log.Info("Starting...")

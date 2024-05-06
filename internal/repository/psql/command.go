@@ -5,6 +5,7 @@ import (
 	"bashExecAPI/internal/domain"
 	errorlib "bashExecAPI/internal/error"
 	"context"
+	"database/sql"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -21,7 +22,7 @@ func NewCommandRepository(provider *provider.Provider) *CommandRepository {
 	}
 }
 
-func (r *CommandRepository) GetCommands(ctx context.Context) ([]domain.Command, error) {
+func (r *CommandRepository) ListCommands(ctx context.Context) ([]domain.Command, error) {
 	var commands []domain.Command
 	err := r.db.SelectContext(ctx, &commands, "SELECT * FROM commands")
 	if err != nil {
@@ -30,36 +31,55 @@ func (r *CommandRepository) GetCommands(ctx context.Context) ([]domain.Command, 
 	return commands, nil
 }
 
-func (r *CommandRepository) GetCommand(ctx context.Context, id string) (*domain.Command, error) {
+func (r *CommandRepository) GetCommand(ctx context.Context, id int) (*domain.Command, error) {
 	var command domain.Command
+	fmt.Println(id)
 	err := r.db.GetContext(ctx, &command, "SELECT * FROM commands WHERE id = $1", id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get command: %w", errorlib.ErrHttpInvalidRequestData)
+		log.Error(fmt.Errorf("failed to get command from database: %v", err))
+		if err == sql.ErrNoRows {
+			log.Error(fmt.Errorf("command with id %d not found", id))
+			return nil, fmt.Errorf("command with id %d not found", id)
+		}
+		return nil, fmt.Errorf("failed to get command: %w", err)
 	}
+
 	return &command, nil
 }
 
-func (r *CommandRepository) CreateCommand(ctx context.Context, command string) (string, error) {
+func (r *CommandRepository) CreateCommand(ctx context.Context, command string) (string, string, error) {
 	query := `
 		INSERT INTO commands (command) VALUES ($1) RETURNING id;
 	`
 
-	var id int64
+	var id int
 	err := r.db.QueryRowContext(ctx, query, command).Scan(&id)
 	if err != nil {
 		log.Error(fmt.Errorf("failed to insert command into database: %v", err))
-		return "", err
+		return "", "", err
 	}
 
-	return fmt.Sprintf("%d", id), nil
+	var result string
+	result, err = r.RunCommand(ctx, id)
+
+	query = `
+        UPDATE commands SET result = $1 WHERE id = $2;
+    `
+	_, err = r.db.ExecContext(ctx, query, result, id)
+	if err != nil {
+		log.Error(fmt.Errorf("failed to update command result in database: %v", err))
+		return "", "", err
+	}
+	return result, fmt.Sprintf("%d", id), nil
 }
 
-func (r *CommandRepository) RunCommand(ctx context.Context, id string) (string, error) {
+func (r *CommandRepository) RunCommand(ctx context.Context, id int) (string, error) {
 	command, err := r.GetCommand(ctx, id)
 	if err != nil {
 		log.Error(fmt.Errorf("failed to get command: %v", err))
 		return "", err
 	}
+
 	file, err := os.Create("script.sh")
 	if err != nil {
 		log.Error(fmt.Errorf("failed to open script file: %v", err))
@@ -88,10 +108,6 @@ func (r *CommandRepository) RunCommand(ctx context.Context, id string) (string, 
 		return "", err
 	}
 
+	fmt.Println(string(output))
 	return string(output), nil
-}
-
-func (r *CommandRepository) StopCommand(ctx context.Context, id string) error {
-
-	return fmt.Errorf("not implemented")
 }
