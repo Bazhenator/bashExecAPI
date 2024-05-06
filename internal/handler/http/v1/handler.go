@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"bashExecAPI/internal/service"
+	"github.com/Bazhenator/bashExecAPI/internal/service"
 	"github.com/gorilla/mux"
 )
 

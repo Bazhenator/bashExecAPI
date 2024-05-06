@@ -1,6 +1,6 @@
 package service
 
-import "bashExecAPI/internal/repository"
+import "github.com/Bazhenator/bashExecAPI/internal/repository"
 
 type Service struct {
 	commandRepo repository.ICommandRepository

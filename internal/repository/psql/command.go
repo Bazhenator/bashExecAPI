@@ -1,12 +1,12 @@
 package psql
 
 import (
-	provider "bashExecAPI/internal/db"
-	"bashExecAPI/internal/domain"
-	errorlib "bashExecAPI/internal/error"
 	"context"
 	"database/sql"
 	"fmt"
+	provider "github.com/Bazhenator/bashExecAPI/internal/db"
+	"github.com/Bazhenator/bashExecAPI/internal/domain"
+	errorlib "github.com/Bazhenator/bashExecAPI/internal/error"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/exec"

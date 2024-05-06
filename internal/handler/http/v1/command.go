@@ -1,9 +1,9 @@
 package v1
 
 import (
-	errorlib "bashExecAPI/internal/error"
-	"bashExecAPI/internal/service"
 	"encoding/json"
+	errorlib "github.com/Bazhenator/bashExecAPI/internal/error"
+	"github.com/Bazhenator/bashExecAPI/internal/service"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"

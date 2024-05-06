@@ -1,8 +1,8 @@
 package repository
 
 import (
-	provider "bashExecAPI/internal/db"
-	db "bashExecAPI/internal/repository/psql"
+	provider "github.com/Bazhenator/bashExecAPI/internal/db"
+	db "github.com/Bazhenator/bashExecAPI/internal/repository/psql"
 )
 
 type CommandRepository struct {

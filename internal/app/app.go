@@ -1,12 +1,12 @@
 package app
 
 import (
-	provider "bashExecAPI/internal/db"
-	handler "bashExecAPI/internal/handler/http"
-	"bashExecAPI/internal/repository"
-	"bashExecAPI/internal/server"
-	"bashExecAPI/internal/service"
 	"fmt"
+	provider "github.com/Bazhenator/bashExecAPI/internal/db"
+	handler "github.com/Bazhenator/bashExecAPI/internal/handler/http"
+	"github.com/Bazhenator/bashExecAPI/internal/repository"
+	"github.com/Bazhenator/bashExecAPI/internal/server"
+	"github.com/Bazhenator/bashExecAPI/internal/service"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"

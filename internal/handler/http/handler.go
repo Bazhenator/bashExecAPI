@@ -1,8 +1,8 @@
 package http
 
 import (
-	v1 "bashExecAPI/internal/handler/http/v1"
-	"bashExecAPI/internal/service"
+	v1 "github.com/Bazhenator/bashExecAPI/internal/handler/http/v1"
+	"github.com/Bazhenator/bashExecAPI/internal/service"
 	"github.com/gorilla/mux"
 )
 
