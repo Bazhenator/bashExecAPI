@@ -1,9 +1,9 @@
 package app
 
 import (
-	provider "bashExecAPI/internal/db"
-	"bashExecAPI/internal/logger"
-	"bashExecAPI/internal/server"
+	provider "github.com/Bazhenator/bashExecAPI/internal/db"
+	"github.com/Bazhenator/bashExecAPI/internal/logger"
+	"github.com/Bazhenator/bashExecAPI/internal/server"
 	"time"
 )
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bashExecAPI/internal/app"
-	"bashExecAPI/internal/config"
-	"bashExecAPI/internal/logger"
 	"fmt"
+	"github.com/Bazhenator/bashExecAPI/internal/app"
+	"github.com/Bazhenator/bashExecAPI/internal/config"
+	"github.com/Bazhenator/bashExecAPI/internal/logger"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
@@ -12,13 +12,13 @@ import (
 )
 
 const (
-	configFile string = "C:/Users/Admin/GolandProjects/bashExecAPI/configs/config.yaml"
+	configFile string = "./configs/config.yaml"
 )
 
 func main() {
 	conf, err := config.ReadConfigFromYAML[app.Config](configFile)
 	if err != nil {
-		panic(fmt.Errorf("Read of config from '%s' failed: %w", configFile, err))
+		panic(fmt.Errorf("Reading config from '%s' failed: %w", configFile, err))
 	}
 	err = config.ValidateConfig(conf)
 	if err != nil {

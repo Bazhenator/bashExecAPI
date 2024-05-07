@@ -1,4 +1,4 @@
-module bashExecAPI
+module github.com/Bazhenator/bashExecAPI
 
 go 1.21
 

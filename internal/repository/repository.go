@@ -1,16 +1,18 @@
 package repository
 
 import (
-	provider "bashExecAPI/internal/db"
-	db "bashExecAPI/internal/repository/psql"
+	provider "github.com/Bazhenator/bashExecAPI/internal/db"
+	db "github.com/Bazhenator/bashExecAPI/internal/repository/psql"
 )
 
-type CommandRepository struct {
+type Repositories struct {
 	CommandRepository ICommandRepository
+	DBRepository      IDataBaseRepository
 }
 
-func NewCommandRepository(provider *provider.Provider) *CommandRepository {
-	return &CommandRepository{
+func NewRepositories(provider *provider.Provider) *Repositories {
+	return &Repositories{
 		CommandRepository: db.NewCommandRepository(provider),
+		DBRepository:      db.NewDBRepository(provider),
 	}
 }

@@ -1,8 +1,8 @@
 package provider
 
 import (
-	errorlib "bashExecAPI/internal/error"
 	"fmt"
+	errorlib "github.com/Bazhenator/bashExecAPI/internal/error"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 )

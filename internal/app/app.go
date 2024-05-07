@@ -1,12 +1,12 @@
 package app
 
 import (
-	provider "bashExecAPI/internal/db"
-	handler "bashExecAPI/internal/handler/http"
-	"bashExecAPI/internal/repository"
-	"bashExecAPI/internal/server"
-	"bashExecAPI/internal/service"
 	"fmt"
+	provider "github.com/Bazhenator/bashExecAPI/internal/db"
+	handler "github.com/Bazhenator/bashExecAPI/internal/handler/http"
+	"github.com/Bazhenator/bashExecAPI/internal/repository"
+	"github.com/Bazhenator/bashExecAPI/internal/server"
+	"github.com/Bazhenator/bashExecAPI/internal/service"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -24,9 +24,9 @@ func NewApp(config *Config, notify chan error) (*App, error) {
 		return nil, fmt.Errorf("Failed to initialize db with error: %w", err)
 	}
 
-	repos := repository.NewCommandRepository(provider)
+	repos := repository.NewRepositories(provider)
 
-	services := service.NewService(repos)
+	services := service.NewServices(repos)
 	handlers := handler.NewHandler(services)
 
 	c := cors.New(cors.Options{
