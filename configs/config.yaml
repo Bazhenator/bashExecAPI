@@ -1,8 +1,8 @@
 db:
-  host: "localhost:5433"
-  name: "bashdb"
-  user: "bash"
-  password: "123"
+  host: "postgres:5432"
+  name: "bash_db"
+  user: "bash_usr"
+  password: "bash_pwd"
 rest:
   host: ":8080"
   resource-timeout: 5s
