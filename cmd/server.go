@@ -12,13 +12,13 @@ import (
 )
 
 const (
-	configFile string = "C:/Users/Admin/Desktop/bashExecAPI/configs/config.yaml"
+	configFile string = "./configs/config.yaml"
 )
 
 func main() {
 	conf, err := config.ReadConfigFromYAML[app.Config](configFile)
 	if err != nil {
-		panic(fmt.Errorf("Read of config from '%s' failed: %w", configFile, err))
+		panic(fmt.Errorf("Reading config from '%s' failed: %w", configFile, err))
 	}
 	err = config.ValidateConfig(conf)
 	if err != nil {
