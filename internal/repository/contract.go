@@ -6,7 +6,7 @@ import (
 	"github.com/Bazhenator/bashExecAPI/internal/domain"
 )
 
-//go:generate mockgen --build_flags=--mod=mod -destination mock/mock_repository.go . ICommandRepository
+//go:generate mockgen --build_flags=--mod=mod -destination mock/mock_repository.go . ICommandRepository,IDataBaseRepository
 
 type ICommandRepository interface {
 	CreateCommand(ctx context.Context, command string) (string, string, error)

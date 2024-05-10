@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  bash-exec-api:
+    container_name: bash-exec-api
+    image: bash-exec-api:latest
+    volumes:
+      - ../../configs/config.yaml:/configs/config.yaml
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - bash-commands
+    depends_on:
+      postgres:
+        condition: service_healthy
