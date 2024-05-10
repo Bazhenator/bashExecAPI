@@ -1,10 +1,12 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	errorlib "github.com/Bazhenator/bashExecAPI/internal/error"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type Provider struct {
@@ -17,10 +19,13 @@ func NewPsqlProvider(config *DbConfig) (*Provider, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to add database to pool. Error: %w", errorlib.ErrHttpInternal)
 	}
-	if db.Ping() != nil {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := db.PingContext(ctx); err != nil {
 		return nil, fmt.Errorf("failed to ping database. Error: %w", errorlib.ErrHttpInternal)
 	}
-
 	return &Provider{
 		DB: db,
 	}, nil

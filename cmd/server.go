@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	configFile string = "./configs/config.yaml"
+	configFile string = "C:\\Users\\Admin\\Desktop\\bashExecAPI\\configs\\config.yaml"
 )
 
 func main() {
