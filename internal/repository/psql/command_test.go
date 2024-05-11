@@ -8,7 +8,6 @@ import (
 	"fmt"
 	provider "github.com/Bazhenator/bashExecAPI/internal/db"
 	"github.com/Bazhenator/bashExecAPI/internal/domain"
-	repos "github.com/Bazhenator/bashExecAPI/internal/repository"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	sqlxmock "github.com/zhashkevych/go-sqlxmock"
@@ -39,10 +38,11 @@ func TestCommandRepository_CreateCommand(t *testing.T) {
 		WithArgs(mockResult, mockID).
 		WillReturnResult(sqlxmock.NewResult(1, 1))
 
-	repo := repos.NewRepositories(&provider.Provider{DB: db})
-	result, id, err := repo.CommandRepository.CreateCommand(context.Background(), mockCommand)
+	repoC := NewCommandRepository(&provider.Provider{DB: db})
+	repoD := NewDBRepository(&provider.Provider{DB: db})
+	result, id, err := repoC.CreateCommand(context.Background(), mockCommand)
 
-	err = repo.DBRepository.DeleteAllRows(context.Background())
+	err = repoD.DeleteAllRows(context.Background())
 	if err != nil {
 		log.Error(fmt.Errorf("failed to delete rows: %v", err))
 	}
@@ -66,10 +66,11 @@ func TestCommandRepository_ListCommands(t *testing.T) {
 	mock.ExpectQuery(`^SELECT \* FROM commands$`).
 		WillReturnRows(commandRows)
 
-	repo := repos.NewRepositories(&provider.Provider{DB: db})
-	commands, err := repo.CommandRepository.ListCommands(context.Background())
+	repoC := NewCommandRepository(&provider.Provider{DB: db})
+	repoD := NewDBRepository(&provider.Provider{DB: db})
+	commands, err := repoC.ListCommands(context.Background())
 
-	err = repo.DBRepository.DeleteAllRows(context.Background())
+	err = repoD.DeleteAllRows(context.Background())
 	if err != nil {
 		log.Error(fmt.Errorf("failed to delete rows: %v", err))
 	}
@@ -92,10 +93,11 @@ func TestCommandRepository_GetCommand(t *testing.T) {
 		WithArgs(1).
 		WillReturnRows(commandRows)
 
-	repo := repos.NewRepositories(&provider.Provider{DB: db})
-	command, err := repo.CommandRepository.GetCommand(context.Background(), 1)
+	repoC := NewCommandRepository(&provider.Provider{DB: db})
+	repoD := NewDBRepository(&provider.Provider{DB: db})
+	command, err := repoC.GetCommand(context.Background(), 1)
 
-	err = repo.DBRepository.DeleteAllRows(context.Background())
+	err = repoD.DeleteAllRows(context.Background())
 	if err != nil {
 		log.Error(fmt.Errorf("failed to delete rows: %v", err))
 	}
@@ -124,10 +126,11 @@ func TestCommandRepository_RunCommand(t *testing.T) {
 		WithArgs(1).
 		WillReturnRows(outputRows)
 
-	repo := repos.NewRepositories(&provider.Provider{DB: db})
-	actualOutput, err := repo.CommandRepository.RunCommand(context.Background(), mockCommand.ID)
+	repoC := NewCommandRepository(&provider.Provider{DB: db})
+	repoD := NewDBRepository(&provider.Provider{DB: db})
+	actualOutput, err := repoC.RunCommand(context.Background(), mockCommand.ID)
 
-	err = repo.DBRepository.DeleteAllRows(context.Background())
+	err = repoD.DeleteAllRows(context.Background())
 	if err != nil {
 		log.Error(fmt.Errorf("failed to delete rows: %v", err))
 	}
