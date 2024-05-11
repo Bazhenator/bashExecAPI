@@ -17,7 +17,7 @@ func TestServices_CreateCommand(t *testing.T) {
 	mockRepo := mocks_repository.NewMockICommandRepository(ctrl)
 	s := Services{commandRepo: mockRepo}
 
-	mockRepo.EXPECT().CreateCommand(gomock.Any(), gomock.Any()).Return("result", nil)
+	mockRepo.EXPECT().CreateCommand(gomock.Any(), gomock.Any()).Return("result", "id", nil)
 
 	result, _, err := s.CreateCommand(context.Background(), "command")
 	assert.NoError(t, err)
