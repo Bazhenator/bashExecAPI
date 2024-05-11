@@ -20,7 +20,7 @@ func NewPsqlProvider(config *DbConfig) (*Provider, error) {
 		return nil, fmt.Errorf("failed to add database to pool. Error: %w", errorlib.ErrHttpInternal)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	if err := db.PingContext(ctx); err != nil {
