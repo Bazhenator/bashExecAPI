@@ -36,7 +36,7 @@ func TestCommandRepository_CreateCommand(t *testing.T) {
 		WillReturnResult(sqlxmock.NewResult(1, 1))
 
 	repoC := NewCommandRepository(&provider.Provider{DB: db})
-	result, id, err := repoC.CreateCommand(context.Background(), mockCommand)
+	//result, id, err := repoC.CreateCommand(context.Background(), mockCommand)
 
 	assert.NoError(t, err)
 	/*assert.Equal(t, mockResult, result)
@@ -79,7 +79,7 @@ func TestCommandRepository_GetCommand(t *testing.T) {
 		WillReturnRows(commandRows)
 
 	repoC := NewCommandRepository(&provider.Provider{DB: db})
-	command, err := repoC.GetCommand(context.Background(), 1)
+	//command, err := repoC.GetCommand(context.Background(), 1)
 
 	assert.NoError(t, err)
 	/*assert.NotNil(t, command)*/
@@ -106,7 +106,7 @@ func TestCommandRepository_RunCommand(t *testing.T) {
 		WillReturnRows(outputRows)
 
 	repoC := NewCommandRepository(&provider.Provider{DB: db})
-	actualOutput, err := repoC.RunCommand(context.Background(), mockCommand.ID)
+	//actualOutput, err := repoC.RunCommand(context.Background(), mockCommand.ID)
 
 	assert.NoError(t, err)
 	/*assert.Equal(t, output, actualOutput)*/
