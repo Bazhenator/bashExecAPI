@@ -5,11 +5,8 @@ package psql
 
 import (
 	"context"
-	"fmt"
 	provider "github.com/Bazhenator/bashExecAPI/internal/db"
 	"github.com/Bazhenator/bashExecAPI/internal/domain"
-	repos "github.com/Bazhenator/bashExecAPI/internal/repository"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	sqlxmock "github.com/zhashkevych/go-sqlxmock"
 	"strconv"
@@ -27,25 +24,20 @@ func TestCommandRepository_CreateCommand(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`^INSERT INTO commands \(command\) VALUES \(\$1\) RETURNING id$`).
+	mock.ExpectQuery(`^INSERT INTO commands \(command\) VALUES \(\$1\) RETURNING id;$`).
 		WithArgs(mockCommand).
 		WillReturnRows(sqlxmock.NewRows([]string{"id"}).AddRow(mockID))
 
-	mock.ExpectQuery(`^SELECT \* FROM commands WHERE id = \? LIMIT 1$`).
+	mock.ExpectQuery(`^SELECT id, command, result FROM commands WHERE id = (.+)$`).
 		WithArgs(mockID).
-		WillReturnRows(sqlxmock.NewRows([]string{"id", "command"}).AddRow(mockID, mockCommand))
+		WillReturnRows(sqlxmock.NewRows([]string{"id", "command", "result"}).AddRow(mockID, mockCommand, mockResult))
 
-	mock.ExpectExec(`^UPDATE commands SET result = \$1 WHERE id = \$2$`).
+	mock.ExpectExec(`^UPDATE commands SET result = \$1 WHERE id = \$2;$`).
 		WithArgs(mockResult, mockID).
 		WillReturnResult(sqlxmock.NewResult(1, 1))
 
-	repo := repos.NewRepositories(&provider.Provider{DB: db})
-	result, id, err := repo.CommandRepository.CreateCommand(context.Background(), mockCommand)
-
-	err = repo.DBRepository.DeleteAllRows(context.Background())
-	if err != nil {
-		log.Error(fmt.Errorf("failed to delete rows: %v", err))
-	}
+	repoC := NewCommandRepository(&provider.Provider{DB: db})
+	result, id, err := repoC.CreateCommand(context.Background(), mockCommand)
 
 	assert.NoError(t, err)
 	assert.Equal(t, mockResult, result)
@@ -66,53 +58,58 @@ func TestCommandRepository_ListCommands(t *testing.T) {
 	mock.ExpectQuery(`^SELECT \* FROM commands$`).
 		WillReturnRows(commandRows)
 
-	repo := repos.NewRepositories(&provider.Provider{DB: db})
-	commands, err := repo.CommandRepository.ListCommands(context.Background())
-
-	err = repo.DBRepository.DeleteAllRows(context.Background())
-	if err != nil {
-		log.Error(fmt.Errorf("failed to delete rows: %v", err))
-	}
+	repoC := NewCommandRepository(&provider.Provider{DB: db})
+	commands, err := repoC.ListCommands(context.Background())
 
 	assert.NoError(t, err)
 	assert.Len(t, commands, 2)
 }
 
 func TestCommandRepository_GetCommand(t *testing.T) {
-	commandRows := sqlxmock.NewRows([]string{"id", "command"}).
-		AddRow(1, "echo test")
+	var commandRow = sqlxmock.NewRows([]string{"id", "command", "result"}).
+		AddRow(1, "echo Hello World!", "Hello World\n")
+
+	output := "Hello World\n"
+
+	var expected = domain.Command{
+		1,
+		"echo Hello World!",
+		&output,
+	}
 
 	db, mock, err := sqlxmock.Newx()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
-	defer db.Close()
+	t.Cleanup(func() {
+		db.Close()
+	})
 
-	mock.ExpectQuery(`^SELECT \* FROM commands WHERE id = \? LIMIT 1$`).
+	mock.ExpectQuery(`^SELECT id, command, result FROM commands WHERE id = (.+)$`).
 		WithArgs(1).
-		WillReturnRows(commandRows)
+		WillReturnRows(commandRow)
 
-	repo := repos.NewRepositories(&provider.Provider{DB: db})
-	command, err := repo.CommandRepository.GetCommand(context.Background(), 1)
+	repo := NewCommandRepository(&provider.Provider{
+		DB: db,
+	})
 
-	err = repo.DBRepository.DeleteAllRows(context.Background())
-	if err != nil {
-		log.Error(fmt.Errorf("failed to delete rows: %v", err))
+	command, err := repo.GetCommand(context.Background(), 1)
+	if assert.NoError(t, err) {
+		assert.Equal(t, command, &expected)
 	}
-
-	assert.NoError(t, err)
-	assert.NotNil(t, command)
 }
 
 func TestCommandRepository_RunCommand(t *testing.T) {
+	output := "hello world\n"
+
 	mockCommand := &domain.Command{
 		ID:      1,
 		Command: "echo hello world",
+		Result:  &output,
 	}
 
-	output := "hello world\n"
-	outputRows := sqlxmock.NewRows([]string{"output"}).
-		AddRow(output)
+	var commandRow = sqlxmock.NewRows([]string{"id", "command", "result"}).
+		AddRow(1, "echo hello world", "hello world\n")
 
 	db, mock, err := sqlxmock.Newx()
 	if err != nil {
@@ -120,18 +117,14 @@ func TestCommandRepository_RunCommand(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`^SELECT \* FROM commands WHERE id = \? LIMIT 1$`).
+	mock.ExpectQuery(`^SELECT id, command, result FROM commands WHERE id = (.+)$`).
 		WithArgs(1).
-		WillReturnRows(outputRows)
+		WillReturnRows(commandRow)
 
-	repo := repos.NewRepositories(&provider.Provider{DB: db})
-	actualOutput, err := repo.CommandRepository.RunCommand(context.Background(), mockCommand.ID)
+	repoC := NewCommandRepository(&provider.Provider{DB: db})
+	actualOutput, err := repoC.RunCommand(context.Background(), mockCommand.ID)
 
-	err = repo.DBRepository.DeleteAllRows(context.Background())
-	if err != nil {
-		log.Error(fmt.Errorf("failed to delete rows: %v", err))
+	if assert.NoError(t, err) {
+		assert.Equal(t, actualOutput, output)
 	}
-
-	assert.NoError(t, err)
-	assert.Equal(t, output, actualOutput)
 }

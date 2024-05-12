@@ -24,7 +24,7 @@ services:
           cpus: '1'
           memory: 4G
     networks:
-      - bash-commands
+      - bash
 
   pgadmin:
     image: dpage/pgadmin4:${PGADMIN_TAG}
@@ -44,10 +44,10 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - bash-commands
+      - bash
 
 networks:
-  bash-commands:
+  bash:
     driver: bridge
 
 volumes:
