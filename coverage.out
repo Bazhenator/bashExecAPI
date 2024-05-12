@@ -1,0 +1,16 @@
+github.com/Bazhenator/bashExecAPI/internal/repository/psql/command.go:19:	NewCommandRepository	100.0%
+github.com/Bazhenator/bashExecAPI/internal/repository/psql/command.go:25:	CreateCommand		71.4%
+github.com/Bazhenator/bashExecAPI/internal/repository/psql/command.go:51:	ListCommands		80.0%
+github.com/Bazhenator/bashExecAPI/internal/repository/psql/command.go:60:	GetCommand		44.4%
+github.com/Bazhenator/bashExecAPI/internal/repository/psql/command.go:75:	RunCommand		50.0%
+github.com/Bazhenator/bashExecAPI/internal/repository/psql/db.go:14:		NewDBRepository		100.0%
+github.com/Bazhenator/bashExecAPI/internal/repository/psql/db.go:20:		DeleteAllRows		63.6%
+github.com/Bazhenator/bashExecAPI/internal/repository/psql/db.go:38:		DeleteRow		66.7%
+github.com/Bazhenator/bashExecAPI/internal/service/command.go:8:		CreateCommand		100.0%
+github.com/Bazhenator/bashExecAPI/internal/service/command.go:12:		ListCommands		100.0%
+github.com/Bazhenator/bashExecAPI/internal/service/command.go:16:		GetCommand		100.0%
+github.com/Bazhenator/bashExecAPI/internal/service/command.go:20:		RunCommand		100.0%
+github.com/Bazhenator/bashExecAPI/internal/service/db.go:5:			DeleteAllRows		100.0%
+github.com/Bazhenator/bashExecAPI/internal/service/db.go:9:			DeleteRow		100.0%
+github.com/Bazhenator/bashExecAPI/internal/service/service.go:10:		NewServices		0.0%
+total:										(statements)		63.3%
