@@ -9,6 +9,7 @@ import (
 	"github.com/Bazhenator/bashExecAPI/internal/domain"
 	"github.com/stretchr/testify/assert"
 	sqlxmock "github.com/zhashkevych/go-sqlxmock"
+	"strconv"
 	"testing"
 )
 
@@ -23,24 +24,24 @@ func TestCommandRepository_CreateCommand(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`^INSERT INTO commands \(command\) VALUES \(\$1\) RETURNING id$`).
+	mock.ExpectQuery(`^INSERT INTO commands \(command\) VALUES \(\$1\) RETURNING id;$`).
 		WithArgs(mockCommand).
 		WillReturnRows(sqlxmock.NewRows([]string{"id"}).AddRow(mockID))
 
-	mock.ExpectQuery(`^SELECT \* FROM commands WHERE id = \? LIMIT 1$`).
+	mock.ExpectQuery(`^SELECT id, command, result FROM commands WHERE id = (.+)$`).
 		WithArgs(mockID).
-		WillReturnRows(sqlxmock.NewRows([]string{"id", "command"}).AddRow(mockID, mockCommand))
+		WillReturnRows(sqlxmock.NewRows([]string{"id", "command", "result"}).AddRow(mockID, mockCommand, mockResult))
 
-	mock.ExpectExec(`^UPDATE commands SET result = \$1 WHERE id = \$2$`).
+	mock.ExpectExec(`^UPDATE commands SET result = \$1 WHERE id = \$2;$`).
 		WithArgs(mockResult, mockID).
 		WillReturnResult(sqlxmock.NewResult(1, 1))
 
 	repoC := NewCommandRepository(&provider.Provider{DB: db})
-	//result, id, err := repoC.CreateCommand(context.Background(), mockCommand)
+	result, id, err := repoC.CreateCommand(context.Background(), mockCommand)
 
 	assert.NoError(t, err)
-	/*assert.Equal(t, mockResult, result)
-	assert.Equal(t, strconv.Itoa(mockID), id)*/
+	assert.Equal(t, mockResult, result)
+	assert.Equal(t, strconv.Itoa(mockID), id)
 }
 
 func TestCommandRepository_ListCommands(t *testing.T) {
@@ -65,35 +66,50 @@ func TestCommandRepository_ListCommands(t *testing.T) {
 }
 
 func TestCommandRepository_GetCommand(t *testing.T) {
-	commandRows := sqlxmock.NewRows([]string{"id", "command"}).
-		AddRow(1, "echo test")
+	var commandRow = sqlxmock.NewRows([]string{"id", "command", "result"}).
+		AddRow(1, "echo Hello World!", "Hello World\n")
+
+	output := "Hello World\n"
+
+	var expected = domain.Command{
+		1,
+		"echo Hello World!",
+		&output,
+	}
 
 	db, mock, err := sqlxmock.Newx()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
-	defer db.Close()
+	t.Cleanup(func() {
+		db.Close()
+	})
 
-	mock.ExpectQuery(`^SELECT \* FROM commands WHERE id = \? LIMIT 1$`).
+	mock.ExpectQuery(`^SELECT id, command, result FROM commands WHERE id = (.+)$`).
 		WithArgs(1).
-		WillReturnRows(commandRows)
+		WillReturnRows(commandRow)
 
-	repoC := NewCommandRepository(&provider.Provider{DB: db})
-	//command, err := repoC.GetCommand(context.Background(), 1)
+	repo := NewCommandRepository(&provider.Provider{
+		DB: db,
+	})
 
-	assert.NoError(t, err)
-	/*assert.NotNil(t, command)*/
+	command, err := repo.GetCommand(context.Background(), 1)
+	if assert.NoError(t, err) {
+		assert.Equal(t, command, &expected)
+	}
 }
 
 func TestCommandRepository_RunCommand(t *testing.T) {
+	output := "hello world\n"
+
 	mockCommand := &domain.Command{
 		ID:      1,
 		Command: "echo hello world",
+		Result:  &output,
 	}
 
-	output := "hello world\n"
-	outputRows := sqlxmock.NewRows([]string{"output"}).
-		AddRow(output)
+	var commandRow = sqlxmock.NewRows([]string{"id", "command", "result"}).
+		AddRow(1, "echo hello world", "hello world\n")
 
 	db, mock, err := sqlxmock.Newx()
 	if err != nil {
@@ -101,13 +117,14 @@ func TestCommandRepository_RunCommand(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`^SELECT \* FROM commands WHERE id = \? LIMIT 1$`).
+	mock.ExpectQuery(`^SELECT id, command, result FROM commands WHERE id = (.+)$`).
 		WithArgs(1).
-		WillReturnRows(outputRows)
+		WillReturnRows(commandRow)
 
 	repoC := NewCommandRepository(&provider.Provider{DB: db})
-	//actualOutput, err := repoC.RunCommand(context.Background(), mockCommand.ID)
+	actualOutput, err := repoC.RunCommand(context.Background(), mockCommand.ID)
 
-	assert.NoError(t, err)
-	/*assert.Equal(t, output, actualOutput)*/
+	if assert.NoError(t, err) {
+		assert.Equal(t, actualOutput, output)
+	}
 }

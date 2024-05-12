@@ -59,7 +59,7 @@ func (r *CommandRepository) ListCommands(ctx context.Context) ([]domain.Command,
 
 func (r *CommandRepository) GetCommand(ctx context.Context, id int) (*domain.Command, error) {
 	var command domain.Command
-	err := r.db.GetContext(ctx, &command, "SELECT * FROM commands WHERE id = $1", id)
+	err := r.db.GetContext(ctx, &command, "SELECT id, command, result FROM commands WHERE id = $1", id)
 	if err != nil {
 		log.Error(fmt.Errorf("failed to get command from database: %v", err))
 		if err == sql.ErrNoRows {

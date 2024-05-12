@@ -1,3 +1,6 @@
+//go:build unit
+// +build unit
+
 package psql
 
 import (
@@ -48,7 +51,6 @@ func TestDataBaseRepository_DeleteRow(t *testing.T) {
 			expectResetSeq: false,
 			expectedError:  nil,
 		},
-		// Добавьте другие тестовые случаи здесь, если необходимо
 	}
 
 	for _, tc := range testCases {
@@ -59,29 +61,22 @@ func TestDataBaseRepository_DeleteRow(t *testing.T) {
 			}
 			defer db.Close()
 
-			// Ожидание запроса DELETE FROM commands WHERE id = $1
 			mock.ExpectExec(`^DELETE FROM commands WHERE id = \$1$`).WithArgs(tc.id).WillReturnResult(sqlxmock.NewResult(0, 1))
 
-			// Если rowCount равно 0, то ожидание запроса SELECT COUNT(*) FROM commands вернет 0
-			// В противном случае, будет возвращено значение rowCount
 			mock.ExpectQuery(`SELECT COUNT\(\*\) FROM commands`).WillReturnRows(sqlxmock.NewRows([]string{"count"}).AddRow(tc.rowCount))
 
 			if tc.expectResetSeq {
-				// Ожидание запроса ALTER SEQUENCE commands_id_seq RESTART WITH 1
 				mock.ExpectExec(`^ALTER SEQUENCE commands_id_seq RESTART WITH 1$`).WillReturnResult(sqlxmock.NewResult(0, 1))
 			}
 
 			repo := NewDBRepository(&provider.Provider{DB: db})
 
-			// Вызов метода DeleteRow
 			err = repo.DeleteRow(context.Background(), tc.id)
 
-			// Проверка ошибки
 			if !errors.Is(err, tc.expectedError) {
 				t.Errorf("expected error: '%v', got: '%v'", tc.expectedError, err)
 			}
 
-			// Проверка, что все ожидания выполнены
 			err = mock.ExpectationsWereMet()
 			if err != nil {
 				t.Errorf("there were unfulfilled expectations: %s", err)
