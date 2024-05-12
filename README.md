@@ -1,4 +1,4 @@
-[![Build](https://github.com/Bazhenator/bashExecAPI/actions/workflows/go.yaml/badge.svg)](https://github.com/Bazhenator/bashExecAPI/actions/workflows/go.yaml)
+[![Build](https://github.com/Bazhenator/bashExecAPI/actions/workflows/build.yaml/badge.svg)](https://github.com/Bazhenator/bashExecAPI/actions/workflows/build.yaml)
 ![Coverage](https://img.shields.io/badge/Coverage-84.5%25-green)
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
