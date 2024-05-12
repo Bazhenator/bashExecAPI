@@ -27,6 +27,10 @@ This project contains service that provides API to run bash scrips.
 ### API docs
 
 Project has configured **swagger API documentation**, that can be accessed by endpoint `GET /swagger/`
+<details>
+  <summary>API screenshots</summary>
+  <img src="https://github.com/Bazhenator/bashExecAPI/assets/113100166/57e232d0-7f53-4869-9323-6346a4ca5e9b">
+</details>
 
   
 
@@ -67,6 +71,11 @@ service postgresql status
 
 > Create new table 'commands', or put schema from init.sql in query of bash_db.
 
+
+> [!WARNING]
+> If your server's **host** or **port** differs from data in ./configs/config.yaml, please, replace it with actual.
+
+ 
 > [!IMPORTANT]
 > To run application:
 ```bash
