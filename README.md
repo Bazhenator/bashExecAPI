@@ -10,6 +10,7 @@
     - [Status](#status)
   - [Getting started](#getting-started)
     - [Download project](#download-project)
+    - [Manual deployment](#manual-deployment)
     - [Docker deployment](#docker-deployment)
     - [Run unit test and update coverage bage](#run-unit-test-and-update-coverage-bage)
     - [Build project](#build-project)
@@ -21,7 +22,7 @@
 
 ## About the project
 
-This projects contains service that provides API to run bash scrips.
+This project contains service that provides API to run bash scrips.
 
 ### API docs
 
@@ -42,6 +43,36 @@ To download use:
 git clone https://github.com/Bazhenator/bashExecAPI.git
 ```
 
+### Manual deployment
+> [!WARNING]
+> You should use _Manual deployment_ if you want to run application without Docker/make etc.
+
+
+> [!IMPORTANT]
+> Follow this instruction to install **PostgreSQL** on (Linux).
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+```
+> Check PostgreSQL status:
+```bash
+service postgresql status
+```
+> [!IMPORTANT]
+> To install pgAdmin4 (web/desktop) version on Linux follow [this](https://www.pgadmin.org/download/pgadmin-4-apt/) link:
+
+
+> Create new server **bash** with database, user and password specified in configs/config.yaml
+
+
+> Create new table 'commands', or put schema from init.sql in query of bash_db.
+
+> [!IMPORTANT]
+> To run application:
+```bash
+cd cmd
+go run server.go
+```
 ### Docker deployment
 
 You can use docker deployment, to prepare docker images use:
@@ -81,11 +112,6 @@ make gogen
 
 You can build executable files with
 ```bash
-make build-backend
+make build-bash
 ```
-or
-```bash
-make build-connector
-```
-for every node.
 Executables will be in **/bin** folder
