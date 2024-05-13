@@ -73,7 +73,8 @@ service postgresql status
 
 
 > [!WARNING]
-> If your server's **host** or **port** differs from data in ./configs/config.yaml, please, replace it with actual.
+> If your server's **host** or **port** differs from data in ./configs/config.yaml, please, replace it with actual. (postgres:5432 -> localhost:5432)
+ 
 
  
 > [!IMPORTANT]
