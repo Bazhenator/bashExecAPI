@@ -1,5 +1,5 @@
 db:
-  host: "postgres:5432"
+  host: "localhost:5432"
   name: "bash_db"
   user: "bash_usr"
   password: "bash_pwd"

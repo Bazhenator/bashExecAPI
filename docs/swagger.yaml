@@ -1,0 +1,228 @@
+openapi: 3.0.0
+info:
+  title: BashExecAPI
+  description: This web application provides API for executing bash-scripts.
+  version: v0.0.1
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Base URL
+paths:
+  /commands/create:
+    post:
+      summary: Create and execute new command
+      tags:
+        - Commands
+      operationId: CreateCommand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Creation'
+      responses:
+        '200':
+          description: Successful post-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreationResponse'
+        default:
+          description: Unsuccessful post-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /commands/run/{id}:
+    post:
+      summary: Execute command with given id
+      tags:
+        - Commands
+      operationId: RunCommand
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Command's identifier
+          schema:
+            type: string
+            example: 1
+      responses:
+        '200':
+          description: Successful post-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunResponse'
+        default:
+          description: Unsuccessful post-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /commands/list:
+    get:
+      summary: Get list of available commands
+      tags:
+        - Commands
+      operationId: ListCommands
+      responses:
+        '200':
+          description: Successful get-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Commands'
+        default:
+          description: Unsuccessful get-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /commands/{id}:
+    get:
+      summary: Get command with given id
+      tags:
+        - Commands
+      operationId: GetCommand
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Command's identifier
+          schema:
+            type: string
+          example: 1
+      responses:
+        '200':
+          description: Successful get-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Command'
+        default:
+          description: Unsuccessful get-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /commands/delete:
+    delete:
+      summary: Delete all rows in table Commands
+      tags:
+        - DataBase
+      operationId: DeleteAllRows
+      responses:
+        '200':
+          description: Successful delete-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAllRowsResponse'
+        default:
+          description: Unsuccessful delete-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /commands/delete/{id}:
+    delete:
+      summary: Delete row with given id in table Commands
+      tags:
+        - DataBase
+      operationId: DeleteRow
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Row's identifier
+          schema:
+            type: string
+          example: 1
+      responses:
+        '200':
+          description: Successful delete-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteRowResponse'
+        default:
+          description: Unsuccessful delete-request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Creation:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          example: echo hello world
+    CreationResponse:
+      type: object
+      required:
+        - id
+        - result
+      properties:
+        id:
+          type: integer
+          example: 1
+        result:
+          type: string
+          example: |
+            hello world
+    RunResponse:
+      type: object
+      required:
+        - result
+      properties:
+        result:
+          type: string
+          example: |
+            hello world
+    DeleteAllRowsResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+          example: all rows have been successfully deleted
+    DeleteRowResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+          example: row 1 has been successfully deleted
+    Command:
+      type: object
+      required:
+        - id
+        - command
+        - result
+      properties:
+        id:
+          type: integer
+          example: 1
+        command:
+          type: string
+          example: echo hello world
+        result:
+          type: string
+          example: |
+            hello world
+    Commands:
+      type: array
+      items:
+        $ref: '#/components/schemas/Command'
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: '500'
+        text:
+          type: string
+          example: some internal error was occurred
+
