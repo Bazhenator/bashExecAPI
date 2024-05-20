@@ -25,6 +25,10 @@ unit-test:
 gogen:
 	go generate ./...
 
+.PHONY: swag-bash
+swag-backend:
+	swag init -g cmd/server.go --exclude internal/handler --output docs --parseInternal
+
 .PHONY: build-bash
 build-bash:
 	go build -o bin/bash cmd/server.go
