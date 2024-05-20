@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	_ "github.com/Bazhenator/bashExecAPI/docs"
 	provider "github.com/Bazhenator/bashExecAPI/internal/db"
 	handler "github.com/Bazhenator/bashExecAPI/internal/handler/http"
 	"github.com/Bazhenator/bashExecAPI/internal/repository"

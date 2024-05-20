@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Bazhenator/bashExecAPI/internal/app"
 	"github.com/Bazhenator/bashExecAPI/internal/config"
+	_ "github.com/Bazhenator/bashExecAPI/internal/domain"
 	"github.com/Bazhenator/bashExecAPI/internal/logger"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -12,8 +13,15 @@ import (
 )
 
 const (
-	configFile string = "./configs/config.yaml"
+	configFile string = "../configs/config.yaml"
 )
+
+// @title			BashExecAPI
+// @version         0.0.1
+// @description     This web application provides API for executing bash-scripts.
+//
+// @host      localhost:8080
+// @BasePath  /api/v1
 
 func main() {
 	conf, err := config.ReadConfigFromYAML[app.Config](configFile)

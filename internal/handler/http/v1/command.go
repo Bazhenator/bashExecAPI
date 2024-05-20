@@ -19,6 +19,16 @@ func NewCommandHandler(service *service.Services) *CommandHandler {
 	}
 }
 
+// CreateCommand creates and executes new command
+// @Summary      Create and execute new command
+// @Description  Create and execute new command
+// @Tags         Commands
+// @Accept       json
+// @Produce      json
+// @Param        command  body  Creation  true  "Command to execute"
+// @Success      200  {object}  CreationResponse
+// @Failure      500  {object}  Error
+// @Router       /commands/create [post]
 func (h *CommandHandler) CreateCommand(w http.ResponseWriter, r *http.Request) {
 	var command struct {
 		Command string `json:"command"`
@@ -42,6 +52,15 @@ func (h *CommandHandler) CreateCommand(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"id": id, "result": result})
 }
 
+// ListCommands gets list of available commands
+// @Summary      Get list of available commands
+// @Description  Get list of available commands
+// @Tags         Commands
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}  Commands
+// @Failure      500  {object}  Error
+// @Router       /commands/list [get]
 func (h *CommandHandler) ListCommands(w http.ResponseWriter, r *http.Request) {
 	commands, err := h.service.ListCommands(r.Context())
 	if err != nil {
@@ -53,6 +72,16 @@ func (h *CommandHandler) ListCommands(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(commands)
 }
 
+// GetCommand gets command with given id
+// @Summary      Get command with given id
+// @Description  Get command with given id
+// @Tags         Commands
+// @Accept       json
+// @Produce      json
+// @Param        id  path  string  true  "Command's identifier"
+// @Success      200  {object}  Command
+// @Failure      500  {object}  Error
+// @Router       /commands/{id} [get]
 func (h *CommandHandler) GetCommand(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -67,6 +96,16 @@ func (h *CommandHandler) GetCommand(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(command)
 }
 
+// RunCommand executes command with given id
+// @Summary      Execute command with given id
+// @Description  Execute command with given id
+// @Tags         Commands
+// @Accept       json
+// @Produce      json
+// @Param        id  path  string  true  "Command's identifier"
+// @Success      200  {object}  RunResponse
+// @Failure      500  {object}  Error
+// @Router       /commands/run/{id} [post]
 func (h *CommandHandler) RunCommand(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -83,8 +122,8 @@ func (h *CommandHandler) RunCommand(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *CommandHandler) SetRouter(router *mux.Router) {
-	router.HandleFunc("/commands/list", h.ListCommands).Methods(http.MethodGet)
-	router.HandleFunc("/commands/{id}", h.GetCommand).Methods(http.MethodGet)
-	router.HandleFunc("/commands/create", h.CreateCommand).Methods(http.MethodPost)
-	router.HandleFunc("/commands/run/{id}", h.RunCommand).Methods(http.MethodPost)
+	router.HandleFunc("/commands/list", h.ListCommands).Methods(http.MethodGet, http.MethodOptions)
+	router.HandleFunc("/commands/{id}", h.GetCommand).Methods(http.MethodGet, http.MethodOptions)
+	router.HandleFunc("/commands/create", h.CreateCommand).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc("/commands/run/{id}", h.RunCommand).Methods(http.MethodPost, http.MethodOptions)
 }
