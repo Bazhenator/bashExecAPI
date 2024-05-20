@@ -14,6 +14,7 @@
     - [Docker deployment](#docker-deployment)
     - [Run unit test and update coverage bage](#run-unit-test-and-update-coverage-bage)
     - [Build project](#build-project)
+    - [Update swagger documentation](#update-swagger-documentation)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -29,7 +30,7 @@ This project contains service that provides API to run bash scrips.
 Project has configured **swagger API documentation**, that can be accessed by endpoint `GET /swagger/`
 <details>
   <summary>API screenshots</summary>
-  <img src="https://github.com/Bazhenator/bashExecAPI/assets/113100166/57e232d0-7f53-4869-9323-6346a4ca5e9b">
+  <img src="https://github.com/Bazhenator/bashExecAPI/assets/113100166/080f13d3-ec6e-4bf9-87c1-4e940e711186">
 </details>
 
   
@@ -125,3 +126,13 @@ You can build executable files with
 make build-bash
 ```
 Executables will be in **/bin** folder
+
+### Update swagger documentation
+
+> [!IMPORTANT]
+> Project uses [swaggo](https://github.com/swaggo/swag), so you should install it
+
+To update swagger documentation after adding new endpoints use:
+```bash
+make swag-bash
+```
